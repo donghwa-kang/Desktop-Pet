@@ -1,0 +1,36 @@
+# Personal reference photos stay local to the modeling workspace.
+ReferencePhotos/
+
+# User-supplied reference assets and their inspection renders stay local.
+ReferenceAssets/
+Previews/retriever_*
+ArtSource/FurStudy/
+ArtSource/FaceRebuild/
+ArtSource/CleanFace/
+ArtSource/PortraitStudy/
+ArtSource/FullbodyStudy/
+
+# Modeling scenes can embed personal reference photos.
+*.blend
+*.glb
+*.gltf
+*.fbx
+*.npz
+*.zip
+
+# Blender backups and temporary files.
+*.blend1
+*.blend2
+__pycache__/
+.venv/
+.env
+.env.*
+!.env.example
+Deliverables/
+
+# Generated exports and application builds.
+Builds/
+UnityProject/Library/
+UnityProject/Temp/
+UnityProject/Logs/
+UnityProject/Obj/
