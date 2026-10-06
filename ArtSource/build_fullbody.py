@@ -7,7 +7,9 @@ from mathutils import Vector
 from fullbody_fields import HEAD_SCALE, HEAD_OFFSET, EYE_LOCAL, EYE_RADIUS, to_head, mouth_local, eye_local, LANDMARKS
 
 ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'ArtSource/FullbodyStudy'
-p=argparse.ArgumentParser();p.add_argument('--tag',default='fullbody04');p.add_argument('--render',action='store_true');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--tag',default='fullbody05');p.add_argument('--render',action='store_true');a=p.parse_args()
+anatomy=json.loads((OUT/f'{a.tag}_anatomy.json').read_text())
+closed=anatomy['expression']=='closed'
 bpy.context.preferences.filepaths.use_scripts_auto_execute=False
 bpy.ops.wm.open_mainfile(filepath=str(ROOT/'ArtSource/PortraitStudy/ogong_portrait02_structure.blend'))
 for ob in list(bpy.data.objects):bpy.data.objects.remove(ob,do_unlink=True)
@@ -36,11 +38,11 @@ def mat(name,color,rough=.5):
 
 skin=bpy.data.materials['White skin under coat'];skin.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value=(.52,.485,.42,1)
 mouth=bpy.data.materials['Mouth interior'];lid=bpy.data.materials['Soft dark eyelid']
-d=np.load(OUT/'body.npz');body=mesh_object('Ogong_Continuous_Anatomy',d['vertices'],d['faces'],skin)
+d=np.load(OUT/f'{a.tag}_body.npz');body=mesh_object('Ogong_Continuous_Anatomy',d['vertices'],d['faces'],skin)
 body.data.materials.append(mouth);body.data.materials.append(lid)
 c=np.array([f.center[:] for f in body.data.polygons]);hx,hy,hz=to_head(*c.T)
 mi=np.zeros(len(c),np.int32)
-mi[np.abs(mouth_local(hx,hy,hz))<.0015]=1
+if not closed:mi[np.abs(mouth_local(hx,hy,hz))<.0015]=1
 body.data.polygons.foreach_set('material_index',mi)
 # Vertex-interpolated eyelid pigment avoids a polygon-stepped dark rim.
 vco=np.array([v.co[:] for v in body.data.vertices]);vx,vy,vz=to_head(*vco.T)
@@ -53,7 +55,10 @@ pigment=sn.new('ShaderNodeMixRGB');pigment.blend_type='MIX';pigment.inputs[1].de
 sl.new(mask.outputs['Fac'],pigment.inputs[0]);sl.new(pigment.outputs[0],sb.inputs['Base Color'])
 sm=body.modifiers.new('Surface relaxation','SMOOTH');sm.factor=.3;sm.iterations=3
 body['anatomy']='One continuous symmetric head, neck, chest, body and four-legged sculpt.'
-d=np.load(OUT/'nose.npz');nose=mesh_object('Ogong_Nose',d['vertices'],d['faces'],bpy.data.materials['Charcoal nose'])
+if closed:
+    from closed_mouth import add_closed_lips
+    add_closed_lips(body)
+d=np.load(OUT/f'{a.tag}_nose.npz');nose=mesh_object('Ogong_Nose',d['vertices'],d['faces'],bpy.data.materials['Charcoal nose'])
 sm=nose.modifiers.new('Nose relaxation','SMOOTH');sm.factor=.25;sm.iterations=2
 
 # Dark iris under a separate refractive corneal shell.
@@ -72,38 +77,40 @@ for sign,label in [(-1,'L'),(1,'R')]:
         ob=bpy.context.object;ob.name=f'Ogong_Eye_{label}_{label2}';ob.scale=HEAD_SCALE;ob.data.materials.append(material)
         for poly in ob.data.polygons:poly.use_smooth=True
 
-# A tongue with a rounded, thicker tip, central groove and papillae shading.
-tongue=bpy.data.materials['Soft pink tongue'];tn=tongue.node_tree.nodes;tl=tongue.node_tree.links;tb=tn['Principled BSDF']
-tb.inputs['Roughness'].default_value=.38;tb.inputs['Coat Weight'].default_value=.09
-tex=tn.new('ShaderNodeTexVoronoi');tex.inputs['Scale'].default_value=70
-bump=tn.new('ShaderNodeBump');bump.inputs['Strength'].default_value=.5;bump.inputs['Distance'].default_value=.0007
-tl.new(tex.outputs['Distance'],bump.inputs['Height']);tl.new(bump.outputs[0],tb.inputs['Normal'])
-vv=[];ff=[];rings=64;sectors=64
-for j in range(rings):
-    t=j/(rings-1);cy=-.803-.040*np.sin(t*np.pi/2);cz=.369-.067*t+.004*np.sin(t*np.pi)
-    dy=-.040*np.pi/2*np.cos(t*np.pi/2);dz=-.067+.004*np.pi*np.cos(t*np.pi)
-    normal=np.array([0,dz,-dy]);normal/=np.linalg.norm(normal)
-    w=.033*np.sqrt(max(.00001,1-((t-.35)/.65)**2));thick=.0048*(1-.18*t)
-    for k in range(sectors):
-        theta=2*np.pi*k/sectors;xx=w*np.cos(theta);off=thick*np.sin(theta)
-        off-=.0011*np.exp(-(xx/.0022)**2)*max(0,np.sin(theta))*np.sin(t*np.pi)
-        co=np.array([xx,cy,cz])+normal*off;vv.append(co*HEAD_SCALE+HEAD_OFFSET)
-for j in range(rings-1):
-    for k in range(sectors):ff.append([j*sectors+k,j*sectors+(k+1)%sectors,(j+1)*sectors+(k+1)%sectors,(j+1)*sectors+k])
-for row,reverse in [(0,True),(rings-1,False)]:
-    idx=len(vv);vv.append(np.mean(vv[row*sectors:(row+1)*sectors],axis=0))
-    for k in range(sectors):
-        tri=[idx,row*sectors+k,row*sectors+(k+1)%sectors];ff.append(tri[::-1] if reverse else tri)
-ob=mesh_object('Ogong_Tongue',vv,ff,tongue);sub=ob.modifiers.new('Tongue smoothing','SUBSURF');sub.levels=1
+# Open expression is retained as an explicit build option, not the default.
+if not closed:
+    # A tongue with a rounded, thicker tip, central groove and papillae shading.
+    tongue=bpy.data.materials['Soft pink tongue'];tn=tongue.node_tree.nodes;tl=tongue.node_tree.links;tb=tn['Principled BSDF']
+    tb.inputs['Roughness'].default_value=.38;tb.inputs['Coat Weight'].default_value=.09
+    tex=tn.new('ShaderNodeTexVoronoi');tex.inputs['Scale'].default_value=70
+    bump=tn.new('ShaderNodeBump');bump.inputs['Strength'].default_value=.5;bump.inputs['Distance'].default_value=.0007
+    tl.new(tex.outputs['Distance'],bump.inputs['Height']);tl.new(bump.outputs[0],tb.inputs['Normal'])
+    vv=[];ff=[];rings=64;sectors=64
+    for j in range(rings):
+        t=j/(rings-1);cy=-.803-.040*np.sin(t*np.pi/2);cz=.369-.067*t+.004*np.sin(t*np.pi)
+        dy=-.040*np.pi/2*np.cos(t*np.pi/2);dz=-.067+.004*np.pi*np.cos(t*np.pi)
+        normal=np.array([0,dz,-dy]);normal/=np.linalg.norm(normal)
+        w=.033*np.sqrt(max(.00001,1-((t-.35)/.65)**2));thick=.0048*(1-.18*t)
+        for k in range(sectors):
+            theta=2*np.pi*k/sectors;xx=w*np.cos(theta);off=thick*np.sin(theta)
+            off-=.0011*np.exp(-(xx/.0022)**2)*max(0,np.sin(theta))*np.sin(t*np.pi)
+            co=np.array([xx,cy,cz])+normal*off;vv.append(co*HEAD_SCALE+HEAD_OFFSET)
+    for j in range(rings-1):
+        for k in range(sectors):ff.append([j*sectors+k,j*sectors+(k+1)%sectors,(j+1)*sectors+(k+1)%sectors,(j+1)*sectors+k])
+    for row,reverse in [(0,True),(rings-1,False)]:
+        idx=len(vv);vv.append(np.mean(vv[row*sectors:(row+1)*sectors],axis=0))
+        for k in range(sectors):
+            tri=[idx,row*sectors+k,row*sectors+(k+1)%sectors];ff.append(tri[::-1] if reverse else tri)
+    ob=mesh_object('Ogong_Tongue',vv,ff,tongue);sub=ob.modifiers.new('Tongue smoothing','SUBSURF');sub.levels=1
 
-enamel=bpy.data.materials['Warm enamel']
-for sign in [-1,1]:
-    for x0,r,height in [(.042,.0021,.004),(.057,.0026,.007)]:
-        pos=np.array([sign*x0,-.802,.371-height/2])*HEAD_SCALE+HEAD_OFFSET
-        bpy.ops.mesh.primitive_cone_add(vertices=24,radius1=.0005,radius2=r*1.1,depth=height*1.1,location=pos)
-        ob=bpy.context.object;ob.name='Ogong_Upper_Tooth';ob.data.materials.append(enamel)
-        bevel=ob.modifiers.new('Rounded enamel','BEVEL');bevel.width=.0008;bevel.segments=3
-        for poly in ob.data.polygons:poly.use_smooth=True
+    enamel=bpy.data.materials['Warm enamel']
+    for sign in [-1,1]:
+        for x0,r,height in [(.042,.0021,.004),(.057,.0026,.007)]:
+            pos=np.array([sign*x0,-.802,.371-height/2])*HEAD_SCALE+HEAD_OFFSET
+            bpy.ops.mesh.primitive_cone_add(vertices=24,radius1=.0005,radius2=r*1.1,depth=height*1.1,location=pos)
+            ob=bpy.context.object;ob.name='Ogong_Upper_Tooth';ob.data.materials.append(enamel)
+            bevel=ob.modifiers.new('Rounded enamel','BEVEL');bevel.width=.0008;bevel.segments=3
+            for poly in ob.data.polygons:poly.use_smooth=True
 
 pink=bpy.data.materials['Muted ear interior']
 for sign,label in [(-1,'L'),(1,'R')]:
@@ -184,6 +191,7 @@ scene.view_settings.view_transform='AgX';scene.view_settings.exposure=.0
 scene.render.resolution_x=700;scene.render.resolution_y=700;scene.render.resolution_percentage=100
 scene['scope']='Standing full-body proportion study from the user supplied five-view sheet. No rig.'
 scene['reference_fit']='Visual landmark estimates. No exact pixel overlay or real-world measurements.'
+scene['default_expression']='closed' if closed else 'open'
 note=bpy.data.texts.get('READ_ME_CLEAN_FACE')
 if note:bpy.data.texts.remove(note)
 note=bpy.data.texts.new('READ_ME_FULLBODY')

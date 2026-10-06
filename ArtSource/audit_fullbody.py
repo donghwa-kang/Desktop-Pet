@@ -5,12 +5,32 @@ import bpy,bmesh
 import numpy as np
 from mathutils.kdtree import KDTree
 
-p=argparse.ArgumentParser();p.add_argument('--tag',default='fullbody04');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--tag',default='fullbody05');a=p.parse_args()
 out=Path(__file__).resolve().parent/'FullbodyStudy'
 bpy.context.preferences.filepaths.use_scripts_auto_execute=False
 bpy.ops.wm.open_mainfile(filepath=str(out/f'ogong_{a.tag}.blend'))
 report={'blender':bpy.app.version_string,'revision':a.tag,'meshes':{},'groom':{}}
-for name in ['Ogong_Continuous_Anatomy','Ogong_Nose','Ogong_Tongue','Ogong_Curled_Tail','Ogong_Ear_L','Ogong_Ear_R']:
+report['default_expression']=bpy.context.scene.get('default_expression','open')
+closed=report['default_expression']=='closed'
+names=['Ogong_Continuous_Anatomy','Ogong_Nose','Ogong_Curled_Tail','Ogong_Ear_L','Ogong_Ear_R']
+if not closed:names.append('Ogong_Tongue')
+if closed:
+    assert not any(o.name.startswith(('Ogong_Tongue','Ogong_Upper_Tooth')) for o in bpy.data.objects)
+    assert all(n in bpy.data.objects for n in ['Ogong_Closed_Lip_Seam','Ogong_Philtrum'])
+    body=bpy.data.objects['Ogong_Continuous_Anatomy']
+    assert all(p.material_index==0 for p in body.data.polygons),'Closed mouth must not retain open-cavity faces'
+    from mathutils.bvhtree import BVHTree
+    surface=BVHTree.FromObject(body,bpy.context.evaluated_depsgraph_get())
+    seam_distances=[]
+    for name in ['Ogong_Closed_Lip_Seam','Ogong_Philtrum']:
+        ob=bpy.data.objects[name]
+        for spline in ob.data.splines:
+            for point in spline.points:
+                assert np.isfinite(point.co[:]).all() and point.radius>0
+                seam_distances.append(surface.find_nearest(point.co.xyz)[3])
+    assert max(seam_distances)<.001,'Lip detail detached from muzzle'
+    report['closed_mouth_checks']={'tongue_and_teeth_absent':True,'lip_seam_present':True,'open_cavity_material_faces':0,'max_lip_surface_distance':max(seam_distances)}
+for name in names:
     ob=bpy.data.objects[name];bm=bmesh.new();bm.from_mesh(ob.data)
     stats={'vertices':len(bm.verts),'faces':len(bm.faces),
            'boundary_edges':sum(e.is_boundary for e in bm.edges),'nonmanifold_edges':sum(not e.is_manifold for e in bm.edges)}

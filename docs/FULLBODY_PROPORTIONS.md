@@ -1,5 +1,7 @@
 # 다각도 그림 기준 전신 비율 작업 — fullbody04
 
+후속 기본형은 입을 다문 `fullbody05`이다. 전신 비율의 기반은 이 문서에, 표정 변경 내용은 [닫힌 입 작업 기록](CLOSED_MOUTH.md)에 보관한다. 아래의 fullbody04 기록과 기존 모델은 이전 버전으로 유지한다.
+
 ## 기준
 
 2026-10-06 사용자가 제시한 흰 포메라니안의 정면·후면·위·양 측면 그림을 전신 비율의 우선 기준으로 삼았다. 앞선 사진 두 장은 얼굴의 세부 형태를 보조하는 자료다.
@@ -31,7 +33,7 @@
 
 ## 파일 및 작업 순서
 
-`ArtSource/FullbodyStudy/ogong_fullbody04.blend`가 최신 전신 작업본이다. 기존 portrait02와 중간 전신 시안은 보존한다. 개인 사진을 포함하는 생성물은 Git에서 제외한다. 사용자에게는 이전에 확인한 Google Drive 경로로 ZIP을 전달한다.
+`ArtSource/FullbodyStudy/ogong_fullbody04.blend`는 입을 연 전신 작업본이다. 기존 portrait02와 중간 전신 시안은 보존한다. 개인 사진을 포함하는 생성물은 Git에서 제외한다. 사용자에게는 이전에 확인한 Google Drive 경로로 ZIP을 전달한다.
 
 1. `fullbody_fields.py`: 비율과 연속 형태 정의.
 2. `sculpt_fullbody.py`: NumPy·SciPy·scikit-image로 표면 추출.

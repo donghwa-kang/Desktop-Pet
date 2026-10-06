@@ -1,6 +1,10 @@
 # Ogong 3D source
 
-## Current: full-body reference proportions
+## Current: closed-mouth default
+
+`FullbodyStudy/ogong_fullbody05.blend` makes a closed, neutral mouth the default expression. The chin and lower muzzle are rebuilt as a closed surface; subtle lip/philtrum details follow the surface, and the default scene contains no exposed tongue or tooth objects. The regional muzzle groom is adjusted around the lip contact. See [closed-mouth notes](../docs/CLOSED_MOUTH.md). This is a static sculpt, not a facial expression rig.
+
+## Previous: full-body reference proportions
 
 `FullbodyStudy/ogong_fullbody04.blend` extends the portrait into a standing quadruped using the user's five-view sheet as the primary proportional reference. It contains continuous head/neck/body/limb anatomy, a low curled tail, revised facial details, regional hair, hidden measurement landmarks and seven review cameras. See [full-body notes](../docs/FULLBODY_PROPORTIONS.md). The reference sheet was viewed in chat; exact pixel registration awaits its original file. This is a dense editable study without rigging or runtime optimization.
 

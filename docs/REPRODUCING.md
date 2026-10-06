@@ -26,18 +26,18 @@
 ```sh
 python ArtSource/sculpt_portrait.py
 python ArtSource/build_portrait.py --tag portrait02
-python ArtSource/sculpt_fullbody.py
-python ArtSource/build_fullbody.py --tag fullbody04
-python ArtSource/groom_fullbody.py --tag fullbody04 --size 720 --samples 28 --views Front Side Threequarter Face Back Top Opposite
-python ArtSource/audit_fullbody.py --tag fullbody04
+python ArtSource/sculpt_fullbody.py --tag fullbody05 --expression closed
+python ArtSource/build_fullbody.py --tag fullbody05
+python ArtSource/groom_fullbody.py --tag fullbody05 --size 720 --samples 28 --views Front Side Threequarter Face Back Top Opposite
+python ArtSource/audit_fullbody.py --tag fullbody05
 ```
 
-표면 추출은 `.npz`를 저장하고, 장면 구성은 `_structure.blend`, 털 생성은 최종 `.blend`와 렌더를 저장한다. 결과는 `ArtSource/PortraitStudy/`, `ArtSource/FullbodyStudy/`에 생성된다. `groom_fullbody.py`의 `--views` 뒤를 비우면 렌더 없이 털을 생성하고 장면을 저장한다.
+표면 추출은 `fullbody05_body.npz`·`fullbody05_nose.npz`와 표정 정보가 있는 `fullbody05_anatomy.json`을 저장하고, 장면 구성은 `_structure.blend`, 털 생성은 최종 `.blend`와 렌더를 저장한다. 결과는 `ArtSource/PortraitStudy/`, `ArtSource/FullbodyStudy/`에 생성된다. `groom_fullbody.py`의 `--views` 뒤를 비우면 렌더 없이 털을 생성하고 장면을 저장한다.
 
 완성된 장면의 카메라만 다시 렌더하려면 다음을 사용한다.
 
 ```sh
-python ArtSource/render_fullbody.py --tag fullbody04 --size 720 --samples 28 --views Front Side Threequarter Face Back Top Opposite
+python ArtSource/render_fullbody.py --tag fullbody05 --size 720 --samples 28 --views Front Side Threequarter Face Back Top Opposite
 ```
 
 같은 태그로 실행하면 생성 파일을 덮어쓰므로 직접 수정한 장면은 다른 이름으로 저장한다. 스크립트는 Blender의 열린 장면을 교체하므로 편집 중인 작업을 저장한 뒤 별도 프로세스에서 실행한다.
@@ -46,6 +46,6 @@ python ArtSource/render_fullbody.py --tag fullbody04 --size 720 --samples 28 --v
 
 `audit_fullbody.py`는 닫힌 표면, 좌우 대칭, 털 좌표·반경·표면 참조, 카메라, 내장 사진을 검사한다. 이 구조 검사는 사진과의 유사도를 수치로 검증하는 절차가 아니다.
 
-`export_fullbody_delivery.py`는 재질에 사용되지 않는 참고 사진을 제거한 별도 전달본을 만들고 다시 연다. `package_fullbody.py`는 그 파일과 렌더 7장, 설명서를 묶는다. 현재 두 전달 스크립트의 출력 경로는 클라우드 작업 환경의 `/workspace/Deliverables`로 지정돼 있으므로 다른 컴퓨터에서는 경로를 수정해야 한다.
+`export_fullbody_delivery.py`는 재질에 사용되지 않는 참고 사진을 제거한 별도 전달본을 만들고 다시 연다. `package_fullbody.py`는 그 파일과 렌더 7장, 설명서를 묶는다. 두 전달 스크립트의 기본 출력 경로는 `/workspace/Deliverables`이다. 다른 컴퓨터에서는 두 명령에 동일한 `--output-root` 경로를 지정한다. `--tag`로 전달할 버전을 선택한다.
 
 최신 전달본은 재개방·구조 검사와 ZIP 무결성 확인을 마쳤다. 공개 미리보기는 생성된 PNG를 `Previews/fullbody04/`로 복사한 것이다. 공개 저장소에서 전체 제작 파이프라인을 새로 실행하는 CI는 아직 없다.

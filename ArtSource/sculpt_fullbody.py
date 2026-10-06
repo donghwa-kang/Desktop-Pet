@@ -1,5 +1,5 @@
 """Extract the continuous full-body sculpt. Requires numpy/scipy/scikit-image."""
-import json
+import argparse,json
 from pathlib import Path
 import numpy as np
 from scipy.spatial import cKDTree
@@ -8,6 +8,7 @@ from fullbody_fields import body_field, nose_field, LANDMARKS
 
 OUT=Path(__file__).resolve().parent/'FullbodyStudy'
 OUT.mkdir(exist_ok=True)
+p=argparse.ArgumentParser();p.add_argument('--tag',default='fullbody05');p.add_argument('--expression',choices=['closed','open'],default='closed');args=p.parse_args()
 
 
 def extract(name, bounds, step, field):
@@ -18,7 +19,7 @@ def extract(name, bounds, step, field):
     vertices,faces,_,_=marching_cubes(volume,0,spacing=tuple(a[1]-a[0] for a in axes),
                                      gradient_direction='ascent',allow_degenerate=False)
     vertices+=np.array([a[0] for a in axes])
-    np.savez_compressed(OUT/f'{name}.npz',vertices=vertices.astype(np.float32),faces=faces)
+    np.savez_compressed(OUT/f'{args.tag}_{name}.npz',vertices=vertices.astype(np.float32),faces=faces)
     mirror=vertices.copy();mirror[:,0]*=-1
     error=cKDTree(vertices).query(mirror,workers=4)[0]
     stats={'vertices':len(vertices),'faces':len(faces),'mirror_max':float(error.max())}
@@ -27,11 +28,12 @@ def extract(name, bounds, step, field):
 
 
 report={
-    'body':extract('body',[(-.33,.33),(-.69,.66),(-.005,.96)],.003,body_field),
+    'body':extract('body',[(-.33,.33),(-.69,.66),(-.005,.96)],.003,lambda x,y,z:body_field(x,y,z,args.expression)),
     'nose':extract('nose',[(-.048,.048),(-.633,-.545),(.668,.754)],.0008,nose_field),
     'landmarks':LANDMARKS,
+    'expression':args.expression,
     'units':'normalized approximate overall coat height; not real-world metres',
     'reference':'User supplied five-view white Pomeranian sheet, 2026-10-06 KST',
     'measurement_method':'Visual landmark estimates from displayed sheet, not pixel-overlay fitting',
 }
-(OUT/'anatomy.json').write_text(json.dumps(report,indent=2))
+(OUT/f'{args.tag}_anatomy.json').write_text(json.dumps(report,indent=2))

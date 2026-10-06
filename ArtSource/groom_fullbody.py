@@ -4,13 +4,14 @@ from pathlib import Path
 import bpy
 import numpy as np
 from mathutils.kdtree import KDTree
-from fullbody_fields import to_head
+from fullbody_fields import to_head,closed_lip_height
 
 ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'ArtSource/FullbodyStudy'
-p=argparse.ArgumentParser();p.add_argument('--tag',default='fullbody04');p.add_argument('--samples',type=int,default=20);p.add_argument('--size',type=int,default=640);p.add_argument('--views',nargs='*',default=['Front','Side']);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--tag',default='fullbody05');p.add_argument('--samples',type=int,default=20);p.add_argument('--size',type=int,default=640);p.add_argument('--views',nargs='*',default=['Front','Side']);a=p.parse_args()
 bpy.context.preferences.filepaths.use_scripts_auto_execute=False
 bpy.ops.wm.open_mainfile(filepath=str(OUT/f'ogong_{a.tag}_structure.blend'))
 scene=bpy.context.scene;collection=bpy.data.collections.new('Ogong_Groom_Regions');scene.collection.children.link(collection)
+closed=scene.get('default_expression')=='closed'
 rng=np.random.default_rng(100601);report={}
 hair=bpy.data.materials['Clean_White_Fur'];hair.name='Ogong_Ivory_White_Fibres'
 nodes=hair.node_tree.nodes;links=hair.node_tree.links
@@ -80,6 +81,10 @@ def groom(name,surface,r,n,kind,under=False,paired=True):
     elif kind=='muzzle':
         flow=np.column_stack([np.tanh(x*26),np.full(count,-.10),-.35+3.0*(z-.70)])
         L=np.full(count,.020);ed=np.hypot(x-.077,z-.742);L*=.28+.72*ss(.023,.050,ed)
+        if closed:
+            hx,hy,hz=to_head(x,y,z)
+            near=(1-ss(.003,.016,np.abs(hz-closed_lip_height(hx))))*(1-ss(.035,.055,np.abs(hx)))
+            L*=1-.60*near
         amplitude=np.full(count,.023)
     elif kind=='body':
         rear=ss(.30,.49,y)
@@ -129,6 +134,9 @@ body=bpy.data.objects['Ogong_Continuous_Anatomy'];r,n=sample(body,190000,paired=
 x,y,z=r.T
 keep=~((y<-.50)&((x/.035)**2+((z-.7096)/.028)**2<1.05))
 keep&=~((y<-.477)&(((x-.077)/.024)**2+((z-.742)/.0215)**2<1))
+if closed:
+    hx,hy,hz=to_head(x,y,z)
+    keep&=~((hy<-.78)&(hx<.040)&(np.abs(hz-closed_lip_height(hx))<.0011))
 r,n=r[keep],n[keep];x,y,z=r.T
 muzzle=(y<-.50)&(x<.105)&(z>.622)&(z<.730)
 leg=z<.325
@@ -160,7 +168,7 @@ scene.frame_set(1);scene.camera=bpy.data.objects['Review_Front']
 for screen in bpy.data.screens:
     for area in screen.areas:
         if area.type=='VIEW_3D':area.spaces.active.region_3d.view_perspective='CAMERA'
-manifest={'revision':a.tag,'regions':report,'total_strands':sum(v['strands'] for v in report.values()),'rigged':False}
+manifest={'revision':a.tag,'default_expression':scene.get('default_expression'),'regions':report,'total_strands':sum(v['strands'] for v in report.values()),'rigged':False}
 (OUT/f'{a.tag}_groom.json').write_text(json.dumps(manifest,indent=2))
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT/f'ogong_{a.tag}.blend'),compress=True)
 for view in a.views:

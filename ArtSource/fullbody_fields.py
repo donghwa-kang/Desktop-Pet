@@ -23,20 +23,30 @@ def mouth_local(x, y, z):
     return -union(-opening, upper-z, .0035)
 
 
+def closed_lip_height(x):
+    """Neutral lip contact, in head-local coordinates, with a shallow central cleft."""
+    return .388 + .0018*(np.abs(x)/.038)**2 - .001*np.exp(-(x/.012)**2)
+
+
 def eye_local(x, y, z):
     dx = np.abs(x)-.070
     return ell(dx, y, z-.06*dx, (0, -.766, .454), (.0215, .032, .0195))
 
 
-def head_local(x, y, z):
+def head_local(x, y, z, expression='closed'):
     d = ell(x, y, z, (0, -.642, .456), (.153, .128, .139))
     d = union(d, ell(x, y, z, (0, -.650, .383), (.153, .115, .079)), .027)
     d = union(d, ell(x, y, z, (0, -.613, .235), (.174, .128, .163)), .052)
     d = union(d, ell(np.abs(x), y, z, (.030, -.786, .403), (.045, .039, .037)), .020)
-    d = union(d, ell(x, y, z, (0, -.761, .314), (.054, .040, .021)), .021)
+    if expression == 'closed':
+        # Raise and reshape the chin to meet the upper muzzle; no open oral cavity.
+        d = union(d, ell(x, y, z, (0, -.759, .371), (.047, .032, .020)), .021)
+    else:
+        d = union(d, ell(x, y, z, (0, -.761, .314), (.054, .040, .021)), .021)
     d = union(d, ell(np.abs(x), y, z, (.072, -.741, .477), (.032, .021, .009)), .017)
     d = union(d, ell(np.abs(x), y, z, (.071, -.743, .434), (.027, .019, .008)), .010)
-    d = np.maximum(d, -mouth_local(x, y, z))
+    if expression == 'open':
+        d = np.maximum(d, -mouth_local(x, y, z))
     return np.maximum(d, -eye_local(x, y, z))
 
 
@@ -47,9 +57,9 @@ def capsule(x, y, z, a, b, ra, rb):
     return np.sqrt((x-a[0]-vx*t)**2+(y-a[1]-vy*t)**2+(z-a[2]-vz*t)**2)-r
 
 
-def body_field(x, y, z):
+def body_field(x, y, z, expression='closed'):
     hx, hy, hz = to_head(x, y, z)
-    d = head_local(hx, hy, hz)*1.1
+    d = head_local(hx, hy, hz, expression)*1.1
     # Rib cage, shoulder girdle, abdomen and pelvis blend into the neck.
     d = union(d, ell(x, y, z, (0, .085, .473), (.184, .324, .193)), .060)
     d = union(d, ell(x, y, z, (0, -.160, .494), (.155, .166, .184)), .045)

@@ -1,21 +1,26 @@
 """Package the verified Blender scene and real rendered views for Drive delivery."""
-import hashlib,json
+import argparse,hashlib,json
 from pathlib import Path
 from zipfile import ZipFile,ZIP_STORED
 from PIL import Image
 
 root=Path(__file__).resolve().parents[1];src=root/'ArtSource/FullbodyStudy'
-tag='fullbody04';out=Path('/workspace/Deliverables');out.mkdir(exist_ok=True)
+p=argparse.ArgumentParser();p.add_argument('--tag',default='fullbody05');p.add_argument('--output-root',type=Path,default=Path('/workspace/Deliverables'));args=p.parse_args()
+tag=args.tag;out=args.output_root;out.mkdir(parents=True,exist_ok=True)
 delivery=out/f'ogong_{tag}'
+validation=json.loads((delivery/f'{tag}_validation.json').read_text())
+assert not validation['packed_photos']
+expression='입을 다문 기본 표정' if validation.get('default_expression')=='closed' else '입을 연 표정'
 files=[f'ogong_{tag}.blend',f'{tag}_validation.json']
 for view in ['front','side','back','top','threequarter','face','opposite']:
     name=f'{tag}_{view}.png'
     with Image.open(src/name) as im:im.verify()
     files.append(name)
-readme='''오공이 전신 비율 수정본 — fullbody04
+readme=f'''오공이 전신 수정본 — {tag}
+기본 표정: {expression}
 
 1. ZIP을 압축 해제하세요.
-2. Blender 5.2.2 LTS의 File > Open에서 ogong_fullbody04.blend를 여세요.
+2. Blender 5.2.2 LTS의 File > Open에서 ogong_{tag}.blend를 여세요.
 3. 숫자패드 0을 누르면 카메라 화면을 볼 수 있습니다.
 
 타임라인 프레임별 카메라:
@@ -39,6 +44,7 @@ with ZipFile(target,'w',compression=ZIP_STORED) as z:
         z.write(source,f'ogong_{tag}/{name}')
     z.writestr(f'ogong_{tag}/README.txt',readme.encode('utf-8-sig'))
     z.write(root/'docs/FULLBODY_PROPORTIONS.md',f'ogong_{tag}/PROPORTION_NOTES.md')
+    if validation.get('default_expression')=='closed':z.write(root/'docs/CLOSED_MOUTH.md',f'ogong_{tag}/CLOSED_MOUTH.md')
 with ZipFile(target) as z:assert z.testzip() is None
 target.chmod(0o644)
 report={'file':str(target),'bytes':target.stat().st_size,'md5':hashlib.md5(target.read_bytes()).hexdigest(),'render_count':7,'reference_photos':0}
