@@ -4,6 +4,12 @@
 
 현재는 **3D 모델링 연구와 앱 설계 단계**입니다. 실행 가능한 Windows 앱은 아직 없습니다. 최신 모델은 입을 다문 기본형 `fullbody05`이며, 사진·다각도 그림을 참고해 전신 비율과 얼굴, 부위별 털을 조정한 작업본입니다. 기준 이미지와의 완전한 일치나 실사 수준의 유사도를 검증한 완성본은 아닙니다.
 
+## 로컬에서 작업 이어가기
+
+**[인수인계 문서](docs/HANDOFF.md)**부터 읽습니다. [Windows 로컬 시작 절차](docs/LOCAL_SETUP.md)와 [대화 결정·수정 이력](docs/CONVERSATION_HISTORY.md)에 현재 요구사항, 실패했던 접근, 최신 모델과 다음 작업을 정리했습니다. Codex는 저장소 루트의 [AGENTS.md](AGENTS.md)를 시작 안내로 사용할 수 있습니다.
+
+[최신 모델 ZIP 받기 — Google Drive](https://drive.google.com/file/d/1v9LjZD3fCzQs4TVqE2TAsByFbadaCyzX/view). 기존 업로드 계정으로 로그인해야 합니다. 모델은 Git에 포함되지 않으며, ZIP에는 개인 참고 사진을 제외한 `.blend`, 렌더 7장과 검수 기록이 있습니다. [파일 목록·크기·SHA-256](docs/artifacts/fullbody05.json)을 함께 보관합니다.
+
 ![fullbody05 실제 Blender 렌더](Previews/fullbody05/fullbody05_threequarter.png)
 
 ## 현재 작업
@@ -11,7 +17,7 @@
 기본 표정은 입을 다문 상태입니다. [닫힌 입 작업 기록](docs/CLOSED_MOUTH.md)에 주둥이·턱·입선 변경을 정리했습니다. 입을 연 이전 모델은 별도로 보관합니다.
 
 - 머리·목·몸통·네 다리를 잇는 연속 표면과 등 위로 말리는 꼬리
-- 눈·각막·눈꺼풀, 코·콧구멍, 입·혀의 형태와 재질
+- 눈·각막·눈꺼풀, 코·콧구멍, 닫힌 주둥이·턱·입선의 형태와 재질
 - 얼굴·가슴·몸통·다리·귀·꼬리의 Blender Hair Curves
 - 정면·양 측면·후면·위·사선·얼굴 확대 렌더 7장
 - 메시 연결 상태, 좌우 대칭, 털 좌표와 참조를 검사하는 스크립트
@@ -29,6 +35,8 @@
 | [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) | Windows 바탕화면 전용 앱 범위와 개발 단계 |
 | [docs/3D_ASSET_PLAN.md](docs/3D_ASSET_PLAN.md) | 모델·털·리깅·애니메이션 제작 계획 |
 | [docs/REPRODUCING.md](docs/REPRODUCING.md) | 실행 환경, 파일 의존성, 작업 순서 |
+| [docs/HANDOFF.md](docs/HANDOFF.md) | 로컬 재개에 필요한 요구사항·최신 상태·다음 작업 |
+| [docs/artifacts](docs/artifacts) | 최신 전달본 목록과 실제 모델 검수 기록 |
 
 ## 다음 단계
 

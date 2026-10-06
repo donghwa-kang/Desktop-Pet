@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "revision": "fullbody05",
+  "recorded_at": "2026-10-06",
+  "status": "Latest delivered static study; likeness still needs review; not rigged or runtime optimized.",
+  "default_expression": "closed",
+  "blender_version": "5.2.2 LTS",
+  "model_source_commit": "83b5e1de264fc3e4eb46d4ecd51e55d04bd89f83",
+  "download": {
+    "provider": "Google Drive",
+    "file_id": "1v9LjZD3fCzQs4TVqE2TAsByFbadaCyzX",
+    "url": "https://drive.google.com/file/d/1v9LjZD3fCzQs4TVqE2TAsByFbadaCyzX/view?usp=drivesdk",
+    "file_name": "ogong_fullbody05.zip",
+    "bytes": 100884196,
+    "sha256": "ec7cc8cfe12cd816d223467234dd45e33d846858b8812fea28d54e4be12e60b6",
+    "access": "Existing uploading account; public sharing was not enabled."
+  },
+  "model": {
+    "archive_path": "ogong_fullbody05/ogong_fullbody05.blend",
+    "bytes": 96909802,
+    "sha256": "a6775b0fa33f9f394a25a8077b5321c94c3f03770ec3dfc57e2147373da3ca14",
+    "reference_photos": 0,
+    "rigged": false
+  },
+  "render_count": 7,
+  "render_directory": "Previews/fullbody05",
+  "validation_file": "docs/artifacts/fullbody05_validation.json",
+  "archive_entries": [
+    {
+      "path": "ogong_fullbody05/ogong_fullbody05.blend",
+      "bytes": 96909802
+    },
+    {
+      "path": "ogong_fullbody05/fullbody05_validation.json",
+      "bytes": 6080
+    },
+    {
+      "path": "ogong_fullbody05/fullbody05_front.png",
+      "bytes": 561504
+    },
+    {
+      "path": "ogong_fullbody05/fullbody05_side.png",
+      "bytes": 564274
+    },
+    {
+      "path": "ogong_fullbody05/fullbody05_back.png",
+      "bytes": 558871
+    },
+    {
+      "path": "ogong_fullbody05/fullbody05_top.png",
+      "bytes": 511548
+    },
+    {
+      "path": "ogong_fullbody05/fullbody05_threequarter.png",
+      "bytes": 538519
+    },
+    {
+      "path": "ogong_fullbody05/fullbody05_face.png",
+      "bytes": 645597
+    },
+    {
+      "path": "ogong_fullbody05/fullbody05_opposite.png",
+      "bytes": 577888
+    },
+    {
+      "path": "ogong_fullbody05/README.txt",
+      "bytes": 1079
+    },
+    {
+      "path": "ogong_fullbody05/PROPORTION_NOTES.md",
+      "bytes": 4552
+    },
+    {
+      "path": "ogong_fullbody05/CLOSED_MOUTH.md",
+      "bytes": 2666
+    }
+  ]
+}

@@ -1,0 +1,287 @@
+{
+  "blender": "5.2.2 LTS",
+  "revision": "fullbody05",
+  "meshes": {
+    "Ogong_Continuous_Anatomy": {
+      "vertices": 298822,
+      "faces": 597640,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "max_mirror_error": 5.960464477539063e-08
+    },
+    "Ogong_Nose": {
+      "vertices": 21374,
+      "faces": 42744,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "max_mirror_error": 7.450580596923828e-09
+    },
+    "Ogong_Curled_Tail": {
+      "vertices": 2592,
+      "faces": 2562,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    "Ogong_Ear_L": {
+      "vertices": 1536,
+      "faces": 1490,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    "Ogong_Ear_R": {
+      "vertices": 1536,
+      "faces": 1490,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    }
+  },
+  "groom": {
+    "Body_Guard": {
+      "strands": 54320,
+      "surface": "Ogong_Continuous_Anatomy",
+      "min": [
+        -0.3906098008155823,
+        -0.2065747082233429,
+        0.05391780287027359
+      ],
+      "max": [
+        0.3903321325778961,
+        0.59881192445755,
+        0.7594632506370544
+      ]
+    },
+    "Body_Under": {
+      "strands": 54318,
+      "surface": "Ogong_Continuous_Anatomy",
+      "min": [
+        -0.28719064593315125,
+        -0.20928442478179932,
+        0.229130819439888
+      ],
+      "max": [
+        0.28682512044906616,
+        0.5511617064476013,
+        0.708578884601593
+      ]
+    },
+    "Ear_L": {
+      "strands": 3600,
+      "surface": "Ogong_Ear_L",
+      "min": [
+        -0.15641601383686066,
+        -0.3606922924518585,
+        0.7983749508857727
+      ],
+      "max": [
+        -0.060461223125457764,
+        -0.3139791786670685,
+        0.9207489490509033
+      ]
+    },
+    "Ear_R": {
+      "strands": 3600,
+      "surface": "Ogong_Ear_R",
+      "min": [
+        0.062292810529470444,
+        -0.3620561957359314,
+        0.801550567150116
+      ],
+      "max": [
+        0.15371660888195038,
+        -0.31070375442504883,
+        0.9213162660598755
+      ]
+    },
+    "Head_Guard": {
+      "strands": 72676,
+      "surface": "Ogong_Continuous_Anatomy",
+      "min": [
+        -0.3936116397380829,
+        -0.6672517657279968,
+        0.045925483107566833
+      ],
+      "max": [
+        0.3938402831554413,
+        -0.03815252706408501,
+        0.9786707162857056
+      ]
+    },
+    "Head_Under": {
+      "strands": 72676,
+      "surface": "Ogong_Continuous_Anatomy",
+      "min": [
+        -0.2674251198768616,
+        -0.566288411617279,
+        0.2239011526107788
+      ],
+      "max": [
+        0.2675713896751404,
+        -0.1598404049873352,
+        0.9360872507095337
+      ]
+    },
+    "Legs_Fine": {
+      "strands": 89264,
+      "surface": "Ogong_Continuous_Anatomy",
+      "min": [
+        -0.2911053001880646,
+        -0.3790496289730072,
+        0.0035000001080334187
+      ],
+      "max": [
+        0.29090967774391174,
+        0.6120715141296387,
+        0.3249981105327606
+      ]
+    },
+    "Muzzle_Fine": {
+      "strands": 29190,
+      "surface": "Ogong_Continuous_Anatomy",
+      "min": [
+        -0.11483054608106613,
+        -0.6040436029434204,
+        0.5976168513298035
+      ],
+      "max": [
+        0.11433682590723038,
+        -0.4968898296356201,
+        0.7382813096046448
+      ]
+    },
+    "Muzzle_Whiskers": {
+      "strands": 20,
+      "surface": "Ogong_Continuous_Anatomy",
+      "min": [
+        -0.13030047714710236,
+        -0.6007354259490967,
+        0.6457408666610718
+      ],
+      "max": [
+        0.1302170753479004,
+        -0.5774191617965698,
+        0.6997115015983582
+      ]
+    },
+    "Tail_Plume": {
+      "strands": 52000,
+      "surface": "Ogong_Curled_Tail",
+      "min": [
+        -0.29414600133895874,
+        -0.10893552005290985,
+        0.33292368054389954
+      ],
+      "max": [
+        0.3183957040309906,
+        0.8003734350204468,
+        1.0724859237670898
+      ]
+    }
+  },
+  "default_expression": "closed",
+  "closed_mouth_checks": {
+    "tongue_and_teeth_absent": true,
+    "lip_seam_present": true,
+    "open_cavity_material_faces": 0,
+    "max_lip_surface_distance": 0.00018010898202192038
+  },
+  "total_strands": 431664,
+  "coat_bounds": {
+    "min": [
+      -0.3936116397380829,
+      -0.6672517657279968,
+      0.0035000001080334187
+    ],
+    "max": [
+      0.3938402831554413,
+      0.8003734350204468,
+      1.0724859237670898
+    ]
+  },
+  "landmarks": {
+    "eye_R": [
+      0.07700000000000001,
+      -0.4987999999999999,
+      0.7420000000000001
+    ],
+    "eye_L": [
+      -0.07700000000000001,
+      -0.4987999999999999,
+      0.7420000000000001
+    ],
+    "nose_center": [
+      0,
+      -0.5876,
+      0.7096
+    ],
+    "fore_paw_R": [
+      0.116,
+      -0.234,
+      0.011
+    ],
+    "fore_paw_L": [
+      -0.116,
+      -0.234,
+      0.011
+    ],
+    "hind_paw_R": [
+      0.149,
+      0.479,
+      0.011
+    ],
+    "hind_paw_L": [
+      -0.149,
+      0.479,
+      0.011
+    ],
+    "estimated_withers": [
+      0,
+      -0.16,
+      0.678
+    ],
+    "estimated_fore_elbow_R": [
+      0.117,
+      -0.137,
+      0.291
+    ],
+    "estimated_hind_stifle_R": [
+      0.151,
+      0.323,
+      0.279
+    ],
+    "estimated_hock_R": [
+      0.149,
+      0.521,
+      0.127
+    ],
+    "tail_root": [
+      0,
+      0.42,
+      0.59
+    ]
+  },
+  "actual_anatomy_ratios_in_scene_units": {
+    "eye_center_spacing": 0.15400000000000003,
+    "withers_height_above_paw_baseline": 0.667,
+    "front_hind_paw_center_spacing": 0.713,
+    "fore_paw_left_right_spacing": 0.232,
+    "hind_paw_left_right_spacing": 0.298
+  },
+  "reference_comparison": "Visually guided only; not an automated registration against reference pixels.",
+  "cameras": [
+    "Review_Back",
+    "Review_Face",
+    "Review_Front",
+    "Review_Opposite",
+    "Review_Side",
+    "Review_Threequarter",
+    "Review_Top"
+  ],
+  "packed_photos": [],
+  "rigged": false,
+  "delivery": {
+    "reference_photos_removed": true,
+    "reopened_successfully": true,
+    "object_mesh_hair_counts_unchanged": true,
+    "image_datablocks": 0
+  }
+}

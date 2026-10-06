@@ -2,6 +2,8 @@
 
 이 저장소는 제작 스크립트와 기록을 보관한다. Unity 프로젝트나 Windows 실행 파일은 아직 포함하지 않는다.
 
+Windows에서 현재 `.blend`를 직접 편집하며 이어갈 때는 [로컬 시작 안내](LOCAL_SETUP.md)를 먼저 읽는다. 아래 내용은 전체 생성 파이프라인을 다시 실행할 경우의 의존성과 순서이며, 로컬 재개의 필수 설치 절차가 아니다.
+
 ## 환경
 
 - 최신 전신 작업: Blender 5.2.2 LTS의 Python API (`bpy`), Cycles, OpenImageDenoise
@@ -48,4 +50,4 @@ python ArtSource/render_fullbody.py --tag fullbody05 --size 720 --samples 28 --v
 
 `export_fullbody_delivery.py`는 재질에 사용되지 않는 참고 사진을 제거한 별도 전달본을 만들고 다시 연다. `package_fullbody.py`는 그 파일과 렌더 7장, 설명서를 묶는다. 두 전달 스크립트의 기본 출력 경로는 `/workspace/Deliverables`이다. 다른 컴퓨터에서는 두 명령에 동일한 `--output-root` 경로를 지정한다. `--tag`로 전달할 버전을 선택한다.
 
-최신 전달본은 재개방·구조 검사와 ZIP 무결성 확인을 마쳤다. 공개 미리보기는 생성된 PNG를 `Previews/fullbody04/`로 복사한 것이다. 공개 저장소에서 전체 제작 파이프라인을 새로 실행하는 CI는 아직 없다.
+최신 전달본은 재개방·구조 검사와 ZIP 무결성 확인을 마쳤다. 최신 공개 미리보기는 생성된 PNG를 `Previews/fullbody05/`로 복사한 것이며 `Previews/fullbody04/`에는 이전 열린 입 버전을 보관한다. 최신 모델 다운로드 위치와 ZIP 해시는 [자산 목록](artifacts/fullbody05.json), 실제 구조 검사 결과는 [검수 JSON](artifacts/fullbody05_validation.json)에 보관한다. 공개 저장소에서 전체 제작 파이프라인을 새로 실행하는 CI는 아직 없다.
